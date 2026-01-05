@@ -1,4 +1,4 @@
-clsnamespace CSV2SQL_Migrator.Domain.Models;
+namespace CSV2SQL_Migrator.Domain.Models;
 
 /// <summary>
 /// Representa um Job de migração de dados CSV para SQL Server.

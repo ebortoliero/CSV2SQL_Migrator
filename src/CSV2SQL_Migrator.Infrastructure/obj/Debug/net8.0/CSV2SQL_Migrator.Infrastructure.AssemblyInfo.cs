@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CSV2SQL_Migrator.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ac3b9e0e8779ddb90815d4717f99d01396b0861")]
 [assembly: System.Reflection.AssemblyProductAttribute("CSV2SQL_Migrator.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CSV2SQL_Migrator.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
