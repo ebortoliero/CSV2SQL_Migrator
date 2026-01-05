@@ -1,0 +1,17 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Início";
+}
+
+<div class="text-center">
+    <h1 class="display-4">CSV2SQL Migrator</h1>
+    <p class="lead">Sistema de migração de dados de arquivos CSV para SQL Server</p>
+    
+    <div class="mt-5">
+        <a asp-page="/Config/Index" class="btn btn-primary btn-lg me-3">Configurar Migração</a>
+        <a asp-page="/Jobs/Index" class="btn btn-secondary btn-lg me-3">Ver Jobs</a>
+        <a asp-page="/Monitoring/Index" class="btn btn-info btn-lg">Monitorar</a>
+    </div>
+</div>
+

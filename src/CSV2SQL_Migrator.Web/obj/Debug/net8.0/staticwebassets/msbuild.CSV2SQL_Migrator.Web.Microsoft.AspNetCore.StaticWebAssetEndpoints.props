@@ -1,0 +1,28 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAssetEndpoint Include="_content/CSV2SQL_Migrator.Web/css/site.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-S31\u002BYca854aYNqkiT9Z2HLa5B/9E85GLlg8Ut499rGg="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"481"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022S31\u002BYca854aYNqkiT9Z2HLa5B/9E85GLlg8Ut499rGg=\u0022"},{"Name":"Last-Modified","Value":"Sat, 03 Jan 2026 20:28:59 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/CSV2SQL_Migrator.Web/css/site.pzzq2aacnq.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\site.css'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"pzzq2aacnq"},{"Name":"integrity","Value":"sha256-S31\u002BYca854aYNqkiT9Z2HLa5B/9E85GLlg8Ut499rGg="},{"Name":"label","Value":"_content/CSV2SQL_Migrator.Web/css/site.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"481"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022S31\u002BYca854aYNqkiT9Z2HLa5B/9E85GLlg8Ut499rGg=\u0022"},{"Name":"Last-Modified","Value":"Sat, 03 Jan 2026 20:28:59 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/CSV2SQL_Migrator.Web/js/site.c8djo5o2oe.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"c8djo5o2oe"},{"Name":"integrity","Value":"sha256-vBWwXvc9I8IQolxJGFTpgPGwKzNxneH9q8VSb74w\u002BaY="},{"Name":"label","Value":"_content/CSV2SQL_Migrator.Web/js/site.js"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"31"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022vBWwXvc9I8IQolxJGFTpgPGwKzNxneH9q8VSb74w\u002BaY=\u0022"},{"Name":"Last-Modified","Value":"Sat, 03 Jan 2026 20:28:59 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+    <StaticWebAssetEndpoint Include="_content/CSV2SQL_Migrator.Web/js/site.js">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\site.js'))</AssetFile>
+      <Selectors><![CDATA[[]]]></Selectors>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-vBWwXvc9I8IQolxJGFTpgPGwKzNxneH9q8VSb74w\u002BaY="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"31"},{"Name":"Content-Type","Value":"text/javascript"},{"Name":"ETag","Value":"\u0022vBWwXvc9I8IQolxJGFTpgPGwKzNxneH9q8VSb74w\u002BaY=\u0022"},{"Name":"Last-Modified","Value":"Sat, 03 Jan 2026 20:28:59 GMT"}]]]></ResponseHeaders>
+    </StaticWebAssetEndpoint>
+  </ItemGroup>
+</Project>

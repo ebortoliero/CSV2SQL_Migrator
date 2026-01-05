@@ -1,0 +1,301 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\csv2sql_migrator.web\\CSV2SQL_Migrator.Web.csproj": {}
+  },
+  "projects": {
+    "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj",
+        "projectName": "CSV2SQL_Migrator.Application",
+        "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj",
+        "packagesPath": "C:\\Users\\EBORTOLIERO\\.nuget\\packages\\",
+        "outputPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\EBORTOLIERO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj": {
+                "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj",
+        "projectName": "CSV2SQL_Migrator.Domain",
+        "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj",
+        "packagesPath": "C:\\Users\\EBORTOLIERO\\.nuget\\packages\\",
+        "outputPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\EBORTOLIERO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\CSV2SQL_Migrator.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\CSV2SQL_Migrator.Infrastructure.csproj",
+        "projectName": "CSV2SQL_Migrator.Infrastructure",
+        "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\CSV2SQL_Migrator.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\EBORTOLIERO\\.nuget\\packages\\",
+        "outputPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\EBORTOLIERO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj": {
+                "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj"
+              },
+              "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj": {
+                "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Domain\\CSV2SQL_Migrator.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[6.1.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\csv2sql_migrator.web\\CSV2SQL_Migrator.Web.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\csv2sql_migrator.web\\CSV2SQL_Migrator.Web.csproj",
+        "projectName": "CSV2SQL_Migrator.Web",
+        "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\csv2sql_migrator.web\\CSV2SQL_Migrator.Web.csproj",
+        "packagesPath": "C:\\Users\\EBORTOLIERO\\.nuget\\packages\\",
+        "outputPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\csv2sql_migrator.web\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\EBORTOLIERO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj": {
+                "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Application\\CSV2SQL_Migrator.Application.csproj"
+              },
+              "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\CSV2SQL_Migrator.Infrastructure.csproj": {
+                "projectPath": "D:\\USR\\Sistemas\\ProjetosDev\\CSV2SQL_Migrator\\src\\CSV2SQL_Migrator.Infrastructure\\CSV2SQL_Migrator.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.200"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

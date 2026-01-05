@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\CSV2SQL_Migrator.Web.props" />
+</Project>

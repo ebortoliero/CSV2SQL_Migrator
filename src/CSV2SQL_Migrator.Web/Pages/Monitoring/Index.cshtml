@@ -1,0 +1,255 @@
+@page
+@model CSV2SQL_Migrator.Web.Pages.Monitoring.IndexModel
+@{
+    ViewData["Title"] = "Monitoramento de Job";
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.Job == null)
+{
+    <div class="alert alert-warning">
+        Job não encontrado.
+    </div>
+    <a asp-page="/Jobs/Index" class="btn btn-secondary">Voltar para Jobs</a>
+}
+else
+{
+    <div class="row">
+        <div class="col-12">
+            <h2>Monitoramento - Job #@Model.Job.Id</h2>
+            <hr />
+
+            <!-- Informações do Job -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Informações do Job</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Status:</strong>
+                            @switch (Model.Job.Status)
+                            {
+                                case Domain.Models.JobStatus.Created:
+                                    <span class="badge bg-secondary">Criado</span>
+                                    break;
+                                case Domain.Models.JobStatus.Running:
+                                    <span class="badge bg-primary">Em Execução</span>
+                                    break;
+                                case Domain.Models.JobStatus.Completed:
+                                    <span class="badge bg-success">Concluído</span>
+                                    break;
+                                case Domain.Models.JobStatus.Failed:
+                                    <span class="badge bg-danger">Falhou</span>
+                                    break;
+                                case Domain.Models.JobStatus.Cancelled:
+                                    <span class="badge bg-warning">Cancelado</span>
+                                    break;
+                            }
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Pasta Raiz:</strong> @Model.Job.RootFolder
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Arquivos:</strong> @Model.Job.ProcessedFiles / @Model.Job.TotalFiles
+                        </div>
+                        <div class="col-md-3">
+                            <strong>RF23 - Criado em:</strong> @Model.Job.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-3">
+                            <strong>RF23 - Iniciado em:</strong> @(Model.Job.StartedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-")
+                        </div>
+                        <div class="col-md-3">
+                            <strong>RF23 - Finalizado em:</strong> @(Model.Job.FinishedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-")
+                        </div>
+                        @if (Model.UtilizationPercentage.HasValue)
+                        {
+                            <div class="col-md-3">
+                                <strong>RF19 - Aproveitamento:</strong> 
+                                <span class="badge @(Model.UtilizationPercentage >= 90 ? "bg-success" : Model.UtilizationPercentage >= 70 ? "bg-warning" : "bg-danger")">
+                                    @Model.UtilizationPercentage.Value.ToString("F2")%
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progresso em tempo real (RF20) -->
+            @if (Model.Job.Status == Domain.Models.JobStatus.Running)
+            {
+                <div class="alert alert-info">
+                    <strong>RF20 - Progresso em Tempo Real:</strong> Este job está em execução. 
+                    A página será atualizada automaticamente.
+                </div>
+                <script>
+                    setTimeout(function() {
+                        location.reload();
+                    }, 5000); // Atualizar a cada 5 segundos
+                </script>
+            }
+
+            <!-- Arquivos Processados -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Arquivos Processados</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.JobFiles.Count == 0)
+                    {
+                        <p class="text-muted">Nenhum arquivo processado ainda.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Arquivo</th>
+                                        <th>Status</th>
+                                        <th>Tabela</th>
+                                        <th>Linhas Lidas</th>
+                                        <th>Linhas Inseridas</th>
+                                        <th>Linhas Rejeitadas</th>
+                                        <th>Iniciado</th>
+                                        <th>Finalizado</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var file in Model.JobFiles)
+                                    {
+                                        <tr>
+                                            <td>@System.IO.Path.GetFileName(file.FilePath)</td>
+                                            <td>
+                                                @switch (file.Status)
+                                                {
+                                                    case Domain.Models.JobFileStatus.Pending:
+                                                        <span class="badge bg-secondary">Pendente</span>
+                                                        break;
+                                                    case Domain.Models.JobFileStatus.Processing:
+                                                        <span class="badge bg-primary">Processando</span>
+                                                        break;
+                                                    case Domain.Models.JobFileStatus.Completed:
+                                                        <span class="badge bg-success">Concluído</span>
+                                                        break;
+                                                    case Domain.Models.JobFileStatus.Failed:
+                                                        <span class="badge bg-danger">Falhou</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@file.TableName</td>
+                                            <td>@file.LinesRead.ToString("N0")</td>
+                                            <td>@file.LinesInserted.ToString("N0")</td>
+                                            <td>@file.LinesRejected.ToString("N0")</td>
+                                            <td>@(file.StartedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-")</td>
+                                            <td>@(file.FinishedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-")</td>
+                                            <td>
+                                                @if (file.Status == Domain.Models.JobFileStatus.Completed || file.Status == Domain.Models.JobFileStatus.Failed)
+                                                {
+                                                    <form method="post" asp-page-handler="ReprocessFile" asp-route-jobId="@Model.Job.Id" asp-route-jobFileId="@file.Id" class="d-inline">
+                                                        <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('RF21-RF22: Tem certeza? A tabela @file.TableName será removida e recriada. Um novo Job será criado.');">
+                                                            Reprocessar
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Erros (RF17) -->
+            @if (Model.JobErrors.Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-header bg-danger text-white">
+                        <h5>RF17 - Erros Registrados (@Model.JobErrors.Count)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Linha</th>
+                                        <th>Arquivo</th>
+                                        <th>Tipo</th>
+                                        <th>Mensagem</th>
+                                        <th>Data/Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var error in Model.JobErrors.Take(100))
+                                    {
+                                        <tr>
+                                            <td>@(error.LineNumber?.ToString() ?? "-")</td>
+                                            <td>@(error.JobFileId?.ToString() ?? "-")</td>
+                                            <td>@error.ErrorType</td>
+                                            <td>@error.Message</td>
+                                            <td>@error.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @if (Model.JobErrors.Count > 100)
+                            {
+                                <p class="text-muted">Mostrando apenas os primeiros 100 erros de @Model.JobErrors.Count total.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Métricas (RF18) -->
+            @if (Model.JobMetrics.Count > 0)
+            {
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>RF18 - Métricas de Execução</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Métrica</th>
+                                        <th>Valor</th>
+                                        <th>Registrado em</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var metric in Model.JobMetrics)
+                                    {
+                                        <tr>
+                                            <td>@metric.MetricName</td>
+                                            <td>@metric.MetricValue.ToString("N2")</td>
+                                            <td>@metric.RecordedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="mt-3">
+                <a asp-page="/Jobs/Index" class="btn btn-secondary">Voltar para Jobs</a>
+            </div>
+        </div>
+    </div>
+}
+

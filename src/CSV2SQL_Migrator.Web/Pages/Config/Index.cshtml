@@ -1,0 +1,116 @@
+@page
+@model CSV2SQL_Migrator.Web.Pages.Config.IndexModel
+@{
+    ViewData["Title"] = "Configuração";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2>Configuração de Migração</h2>
+        <hr />
+
+        @if (Model.CreatedJobId.HasValue)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Sucesso!</strong> Job #@Model.CreatedJobId criado e iniciado.
+                <a asp-page="/Monitoring/Index" asp-route-jobId="@Model.CreatedJobId.Value" class="alert-link">Ver progresso</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (Model.ConnectionTestMessage != null)
+        {
+            var alertClass = Model.ConnectionTestSuccess == true ? "alert-success" : "alert-danger";
+            <div class="alert @alertClass alert-dismissible fade show" role="alert">
+                @Model.ConnectionTestMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form method="post">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>RF01 - Pasta Raiz de Arquivos CSV</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="RootFolder" class="form-label">Pasta Raiz</label>
+                        <input asp-for="RootFolder" class="form-control" placeholder="C:\Dados\CSV" />
+                        <span asp-validation-for="RootFolder" class="text-danger"></span>
+                        <small class="form-text text-muted">Informe o caminho completo da pasta onde estão os arquivos CSV a serem processados.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>RF04 - Parâmetros de Conexão com SQL Server</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Server" class="form-label">Servidor</label>
+                            <input asp-for="Server" class="form-control" placeholder="localhost" />
+                            <span asp-validation-for="Server" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Database" class="form-label">Banco de Dados</label>
+                            <input asp-for="Database" class="form-control" placeholder="MigracaoDB" />
+                            <span asp-validation-for="Database" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="IntegratedSecurity" class="form-check-input" type="checkbox" id="integratedSecurity" />
+                            <label class="form-check-label" for="integratedSecurity">
+                                Autenticação Integrada (Windows)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row" id="sqlAuthFields">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="UserId" class="form-label">Usuário</label>
+                            <input asp-for="UserId" class="form-control" />
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label">Senha</label>
+                            <input asp-for="Password" class="form-control" type="password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" asp-page-handler="TestConnection" class="btn btn-info me-md-2">
+                    RF05 - Testar Conexão
+                </button>
+                <button type="submit" asp-page-handler="StartMigration" class="btn btn-primary">
+                    RF06 - Iniciar Migração
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('integratedSecurity').addEventListener('change', function() {
+            var sqlAuthFields = document.getElementById('sqlAuthFields');
+            if (this.checked) {
+                sqlAuthFields.style.display = 'none';
+            } else {
+                sqlAuthFields.style.display = 'block';
+            }
+        });
+        
+        // Inicializar estado inicial
+        if (document.getElementById('integratedSecurity').checked) {
+            document.getElementById('sqlAuthFields').style.display = 'none';
+        }
+    </script>
+}
+
