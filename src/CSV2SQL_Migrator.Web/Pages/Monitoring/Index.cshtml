@@ -180,37 +180,237 @@ else
                         <h5>RF17 - Erros Registrados (@Model.JobErrors.Count)</h5>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                            <table class="table table-sm">
-                                <thead>
+                        @{
+                            var errorsByType = Model.JobErrors.GroupBy(e => e.ErrorType).ToList();
+                            var errorsByFile = Model.JobErrors
+                                .Where(e => e.JobFileId.HasValue)
+                                .GroupBy(e => e.JobFileId.Value)
+                                .Select(g => new { FileId = g.Key, FileName = Model.JobFileNames.ContainsKey(g.Key) ? Model.JobFileNames[g.Key] : $"ID: {g.Key}", Count = g.Count() })
+                                .OrderByDescending(x => x.Count)
+                                .Take(10)
+                                .ToList();
+                        }
+                        
+                        <!-- Resumo Estatístico dos Erros -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card border-warning">
+                                    <div class="card-header bg-warning text-dark">
+                                        <strong>Erros por Tipo</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled mb-0">
+                                            @foreach (var group in errorsByType.OrderByDescending(g => g.Count()))
+                                            {
+                                                var typeName = group.Key switch
+                                                {
+                                                    Domain.Models.ErrorType.StructuralFailure => "Falha Estrutural",
+                                                    Domain.Models.ErrorType.LineError => "Erro de Linha",
+                                                    Domain.Models.ErrorType.ColumnError => "Erro de Coluna",
+                                                    Domain.Models.ErrorType.DatabaseError => "Erro de Banco",
+                                                    Domain.Models.ErrorType.Other => "Outro",
+                                                    _ => group.Key.ToString()
+                                                };
+                                                var percentage = (decimal)group.Count() / Model.JobErrors.Count * 100;
+                                                <li class="mb-2">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>@typeName</span>
+                                                        <div>
+                                                            <span class="badge bg-primary">@group.Count()</span>
+                                                            <small class="text-muted">(@percentage.ToString("F1")%)</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar" role="progressbar" style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-info">
+                                    <div class="card-header bg-info text-white">
+                                        <strong>Top 10 Arquivos com Mais Erros</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (errorsByFile.Any())
+                                        {
+                                            <ul class="list-unstyled mb-0">
+                                                @foreach (var fileError in errorsByFile)
+                                                {
+                                                    <li class="mb-2">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <small class="text-break" style="max-width: 70%;">@fileError.FileName</small>
+                                                            <span class="badge bg-danger">@fileError.Count</span>
+                                                        </div>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <p class="text-muted mb-0">Nenhum erro associado a arquivos específicos.</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr />
+                        
+                        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-dark sticky-top">
                                     <tr>
-                                        <th>Linha</th>
-                                        <th>Arquivo</th>
-                                        <th>Tipo</th>
-                                        <th>Mensagem</th>
-                                        <th>Data/Hora</th>
+                                        <th style="width: 5%;">#</th>
+                                        <th style="width: 8%;">Linha</th>
+                                        <th style="width: 20%;">Arquivo</th>
+                                        <th style="width: 12%;">Coluna</th>
+                                        <th style="width: 10%;">Tipo</th>
+                                        <th style="width: 35%;">Mensagem de Erro</th>
+                                        <th style="width: 10%;">Data/Hora</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var error in Model.JobErrors.Take(100))
+                                    @{
+                                        int errorIndex = 1;
+                                    }
+                                    @foreach (var error in Model.JobErrors.Take(500))
                                     {
-                                        <tr>
-                                            <td>@(error.LineNumber?.ToString() ?? "-")</td>
-                                            <td>@(error.JobFileId?.ToString() ?? "-")</td>
-                                            <td>@error.ErrorType</td>
-                                            <td>@error.Message</td>
-                                            <td>@error.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                        var fileName = error.JobFileId.HasValue && Model.JobFileNames.ContainsKey(error.JobFileId.Value)
+                                            ? Model.JobFileNames[error.JobFileId.Value]
+                                            : (error.JobFileId?.ToString() ?? "N/A");
+                                        
+                                        var errorTypeDisplay = error.ErrorType switch
+                                        {
+                                            Domain.Models.ErrorType.StructuralFailure => "Falha Estrutural",
+                                            Domain.Models.ErrorType.LineError => "Erro de Linha",
+                                            Domain.Models.ErrorType.ColumnError => "Erro de Coluna",
+                                            Domain.Models.ErrorType.DatabaseError => "Erro de Banco",
+                                            Domain.Models.ErrorType.Other => "Outro",
+                                            _ => error.ErrorType.ToString()
+                                        };
+
+                                        var errorTypeBadge = error.ErrorType switch
+                                        {
+                                            Domain.Models.ErrorType.StructuralFailure => "bg-danger",
+                                            Domain.Models.ErrorType.LineError => "bg-warning",
+                                            Domain.Models.ErrorType.ColumnError => "bg-info",
+                                            Domain.Models.ErrorType.DatabaseError => "bg-danger",
+                                            Domain.Models.ErrorType.Other => "bg-secondary",
+                                            _ => "bg-secondary"
+                                        };
+
+                                        var messagePreview = error.Message.Length > 150 
+                                            ? error.Message.Substring(0, 150) + "..." 
+                                            : error.Message;
+                                        
+                                        <tr class="@(error.ErrorType == Domain.Models.ErrorType.StructuralFailure || error.ErrorType == Domain.Models.ErrorType.DatabaseError ? "table-danger" : "")">
+                                            <td class="text-muted">@errorIndex</td>
+                                            <td>
+                                                @if (error.LineNumber.HasValue)
+                                                {
+                                                    <span class="badge bg-primary">@error.LineNumber.Value.ToString("N0")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <small class="text-break" title="@fileName">
+                                                    @if (error.JobFileId.HasValue && Model.JobFileNames.ContainsKey(error.JobFileId.Value))
+                                                    {
+                                                        <strong>@fileName</strong>
+                                                        <br />
+                                                        <span class="text-muted">ID: @error.JobFileId.Value</span>
+                                                    }
+                                                    else if (error.JobFileId.HasValue)
+                                                    {
+                                                        <span class="text-muted">ID: @error.JobFileId.Value</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">N/A</span>
+                                                    }
+                                                </small>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(error.ColumnName))
+                                                {
+                                                    <span class="badge bg-secondary" title="Coluna com erro">@error.ColumnName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge @errorTypeBadge" title="@errorTypeDisplay">@errorTypeDisplay</span>
+                                            </td>
+                                            <td>
+                                                <div class="error-message-container">
+                                                    @if (error.Message.Length > 150)
+                                                    {
+                                                        <div class="error-message-preview" id="error-preview-@error.Id">
+                                                            <span>@messagePreview</span>
+                                                            <button type="button" class="btn btn-link btn-sm p-0 ms-2 text-decoration-none" onclick="toggleErrorDetail(@error.Id)" title="Ver detalhes completos">
+                                                                ▼ Ver mais
+                                                            </button>
+                                                        </div>
+                                                        <div class="error-message-full d-none" id="error-full-@error.Id">
+                                                            <div class="alert alert-light border p-2 mb-0">
+                                                                <pre class="mb-0 text-wrap" style="white-space: pre-wrap; word-wrap: break-word; font-size: 0.875rem;">@error.Message</pre>
+                                                            </div>
+                                                            <button type="button" class="btn btn-link btn-sm p-0 mt-1 text-decoration-none" onclick="toggleErrorDetail(@error.Id)" title="Ocultar detalhes">
+                                                                ▲ Ver menos
+                                                            </button>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-wrap">@error.Message</span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">@error.CreatedAt.ToString("dd/MM/yyyy")<br />@error.CreatedAt.ToString("HH:mm:ss")</small>
+                                            </td>
                                         </tr>
+                                        errorIndex++;
                                     }
                                 </tbody>
                             </table>
-                            @if (Model.JobErrors.Count > 100)
+                            @if (Model.JobErrors.Count > 500)
                             {
-                                <p class="text-muted">Mostrando apenas os primeiros 100 erros de @Model.JobErrors.Count total.</p>
+                                <div class="alert alert-warning mb-0 mt-2">
+                                    <strong>⚠ Atenção:</strong> Mostrando apenas os primeiros 500 erros de <strong>@Model.JobErrors.Count</strong> erros totais registrados.
+                                    <br />
+                                    <small>Para análise completa, consulte o banco de dados diretamente.</small>
+                                </div>
                             }
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    function toggleErrorDetail(errorId) {
+                        const preview = document.getElementById('error-preview-' + errorId);
+                        const full = document.getElementById('error-full-' + errorId);
+                        
+                        if (preview && full) {
+                            if (full.classList.contains('d-none')) {
+                                preview.classList.add('d-none');
+                                full.classList.remove('d-none');
+                            } else {
+                                preview.classList.remove('d-none');
+                                full.classList.add('d-none');
+                            }
+                        }
+                    }
+                </script>
             }
 
             <!-- Métricas (RF18) -->

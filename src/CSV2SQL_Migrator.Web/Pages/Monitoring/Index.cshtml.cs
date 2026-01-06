@@ -37,6 +37,7 @@ public class IndexModel : PageModel
     public List<JobError> JobErrors { get; set; } = new();
     public List<JobMetric> JobMetrics { get; set; } = new();
     public decimal? UtilizationPercentage { get; set; }
+    public Dictionary<int, string> JobFileNames { get; set; } = new(); // Mapeia JobFileId -> Nome do arquivo
 
     public async Task OnGetAsync(int? jobId)
     {
@@ -48,6 +49,12 @@ public class IndexModel : PageModel
                 JobFiles = await _jobRepository.GetJobFilesByJobIdAsync(jobId.Value);
                 JobErrors = await _jobRepository.GetJobErrorsByJobIdAsync(jobId.Value);
                 JobMetrics = await _jobRepository.GetJobMetricsByJobIdAsync(jobId.Value);
+
+                // Criar dicionário de nomes de arquivos para exibição detalhada de erros
+                foreach (var jobFile in JobFiles)
+                {
+                    JobFileNames[jobFile.Id] = System.IO.Path.GetFileName(jobFile.FilePath);
+                }
 
                 // RF19: Calcular percentual de aproveitamento
                 CalculateUtilizationPercentage();

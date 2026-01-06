@@ -107,14 +107,28 @@ public class SqlServerService : ISqlServerService
             throw new ArgumentException("A tabela deve ter pelo menos uma coluna", nameof(columns));
         }
 
+        // Validar e sanitizar o nome da tabela
+        if (string.IsNullOrWhiteSpace(tableName))
+        {
+            throw new ArgumentException("O nome da tabela não pode ser vazio", nameof(tableName));
+        }
+
+        // Escapar colchetes no nome da tabela para uso seguro no SQL
+        var escapedTableName = tableName.Replace("]", "]]");
+
         var columnDefinitions = columns
-            .Select(kvp => $"[{kvp.Key}] {kvp.Value.ToSqlDefinition()}")
+            .Select(kvp => 
+            {
+                // Escapar colchetes no nome da coluna também
+                var escapedColumnName = kvp.Key.Replace("]", "]]");
+                return $"[{escapedColumnName}] {kvp.Value.ToSqlDefinition()}";
+            })
             .ToList();
 
         var createTableSql = $@"
-            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{tableName}]') AND type in (N'U'))
+            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{escapedTableName}]') AND type in (N'U'))
             BEGIN
-                CREATE TABLE [dbo].[{tableName}] (
+                CREATE TABLE [dbo].[{escapedTableName}] (
                     {string.Join(",\n                    ", columnDefinitions)}
                 )
             END";
@@ -128,10 +142,18 @@ public class SqlServerService : ISqlServerService
 
     public async Task DropTableAsync(string connectionString, string tableName)
     {
+        if (string.IsNullOrWhiteSpace(tableName))
+        {
+            throw new ArgumentException("O nome da tabela não pode ser vazio", nameof(tableName));
+        }
+
+        // Escapar colchetes no nome da tabela para uso seguro no SQL
+        var escapedTableName = tableName.Replace("]", "]]");
+
         var dropTableSql = $@"
-            IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{tableName}]') AND type in (N'U'))
+            IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[{escapedTableName}]') AND type in (N'U'))
             BEGIN
-                DROP TABLE [dbo].[{tableName}]
+                DROP TABLE [dbo].[{escapedTableName}]
             END";
 
         await using var connection = new SqlConnection(connectionString);
@@ -143,16 +165,24 @@ public class SqlServerService : ISqlServerService
 
     public async Task<bool> TableExistsAsync(string connectionString, string tableName)
     {
-        var checkTableSql = @"
+        if (string.IsNullOrWhiteSpace(tableName))
+        {
+            return false;
+        }
+
+        // Escapar colchetes no nome da tabela para uso seguro no SQL
+        var escapedTableName = tableName.Replace("]", "]]");
+
+        var checkTableSql = $@"
             SELECT COUNT(*) 
             FROM sys.objects 
-            WHERE object_id = OBJECT_ID(N'[dbo].[@TableName]') 
+            WHERE object_id = OBJECT_ID(N'[dbo].[{escapedTableName}]') 
             AND type in (N'U')";
 
         await using var connection = new SqlConnection(connectionString);
         await connection.OpenAsync();
         
-        await using var command = new SqlCommand(checkTableSql.Replace("@TableName", tableName), connection);
+        await using var command = new SqlCommand(checkTableSql, connection);
         var result = await command.ExecuteScalarAsync();
         return Convert.ToInt32(result) > 0;
     }
@@ -185,16 +215,39 @@ public class SqlServerService : ISqlServerService
 
     public string SanitizeColumnName(string columnName, HashSet<string> existingNames)
     {
+        if (string.IsNullOrWhiteSpace(columnName))
+        {
+            return $"COL{existingNames.Count + 1:D3}";
+        }
+
         // Contrato 8.8: Substituir espaços e pontuação por _
         var sanitized = Regex.Replace(columnName, @"[^\w]", "_");
         
         // Contrato 8.8: Remover caracteres inválidos para SQL Server
         sanitized = Regex.Replace(sanitized, @"[^a-zA-Z0-9_]", "");
         
+        // Remover underscores múltiplos consecutivos
+        sanitized = Regex.Replace(sanitized, @"_+", "_");
+        
+        // Remover underscores no início e fim
+        sanitized = sanitized.Trim('_');
+        
         // Contrato 8.8: Colunas sem nome devem ser renomeadas para COL###
         if (string.IsNullOrWhiteSpace(sanitized) || sanitized.All(c => c == '_'))
         {
             sanitized = $"COL{existingNames.Count + 1:D3}";
+        }
+
+        // Garantir que não comece com número (SQL Server não permite)
+        if (sanitized.Length > 0 && char.IsDigit(sanitized[0]))
+        {
+            sanitized = $"C_{sanitized}";
+        }
+
+        // Limitar tamanho do nome (SQL Server tem limite de 128 caracteres para identificadores)
+        if (sanitized.Length > 128)
+        {
+            sanitized = sanitized.Substring(0, 128);
         }
 
         // Contrato 8.8: Colunas duplicadas devem receber sufixos _2, _3, etc.
@@ -204,6 +257,13 @@ public class SqlServerService : ISqlServerService
         {
             finalName = $"{sanitized}_{suffix}";
             suffix++;
+            
+            // Garantir que o nome final não exceda 128 caracteres
+            if (finalName.Length > 128)
+            {
+                var maxBaseLength = 128 - (suffix.ToString().Length + 1);
+                finalName = $"{sanitized.Substring(0, Math.Min(sanitized.Length, maxBaseLength))}_{suffix}";
+            }
         }
 
         return finalName;
@@ -211,13 +271,39 @@ public class SqlServerService : ISqlServerService
 
     private string SanitizeForTableName(string name)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return $"TABLE_{DateTime.Now:yyyyMMddHHmmss}";
+        }
+
         // Similar à sanitização de coluna, mas para nomes de tabela
+        // Remover caracteres especiais e substituir por underscore
         var sanitized = Regex.Replace(name, @"[^\w]", "_");
+        
+        // Remover caracteres que não são letras, números ou underscore
         sanitized = Regex.Replace(sanitized, @"[^a-zA-Z0-9_]", "");
+        
+        // Remover underscores múltiplos consecutivos
+        sanitized = Regex.Replace(sanitized, @"_+", "_");
+        
+        // Remover underscores no início e fim
+        sanitized = sanitized.Trim('_');
+        
+        // Garantir que não comece com número (SQL Server não permite)
+        if (sanitized.Length > 0 && char.IsDigit(sanitized[0]))
+        {
+            sanitized = $"T_{sanitized}";
+        }
         
         if (string.IsNullOrWhiteSpace(sanitized))
         {
             sanitized = $"TABLE_{DateTime.Now:yyyyMMddHHmmss}";
+        }
+
+        // Limitar tamanho do nome (SQL Server tem limite de 128 caracteres para identificadores)
+        if (sanitized.Length > 128)
+        {
+            sanitized = sanitized.Substring(0, 128);
         }
 
         return sanitized;

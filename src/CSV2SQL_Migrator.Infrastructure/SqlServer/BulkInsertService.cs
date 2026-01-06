@@ -95,17 +95,21 @@ public class BulkInsertService : IBulkInsertService
 
         try
         {
+            // Escapar colchetes no nome da tabela para uso seguro no SQL
+            var escapedTableName = tableName.Replace("]", "]]");
+
             using var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null)
             {
-                DestinationTableName = $"[dbo].[{tableName}]",
+                DestinationTableName = $"[dbo].[{escapedTableName}]",
                 BatchSize = batch.Count,
                 BulkCopyTimeout = 300 // 5 minutos
             };
 
-            // Mapear colunas
+            // Mapear colunas (escapar colchetes também)
             foreach (var column in columns)
             {
-                bulkCopy.ColumnMappings.Add(column, column);
+                var escapedColumn = column.Replace("]", "]]");
+                bulkCopy.ColumnMappings.Add(escapedColumn, escapedColumn);
             }
 
             await bulkCopy.WriteToServerAsync(dataTable);
