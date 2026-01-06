@@ -29,7 +29,8 @@ public class TypeInferenceService : ITypeInferenceService
             // Contrato 8.6: Fallback para tipo genérico quando não confiável
             return new SqlColumnType
             {
-                TypeName = "nvarchar(255)",
+                TypeName = "nvarchar",
+                Precision = 255,
                 IsReliable = false
             };
         }
@@ -56,7 +57,8 @@ public class TypeInferenceService : ITypeInferenceService
             // Contrato 8.6: Fallback para tipo genérico quando não confiável
             return new SqlColumnType
             {
-                TypeName = "nvarchar(255)",
+                TypeName = "nvarchar",
+                Precision = 255,
                 IsReliable = false
             };
         }
@@ -247,12 +249,14 @@ public class TypeInferenceService : ITypeInferenceService
         }
 
         // Contrato 8.9: Tamanho padrão nvarchar(255), usar nvarchar(max) se maior
-        var typeName = maxLength > 255 ? "nvarchar(max)" : "nvarchar(255)";
+        // TypeName sempre será "nvarchar" sem parênteses
+        // Precision será null para nvarchar(max), ou o tamanho específico (limitado a 255 como padrão)
+        var precision = maxLength > 255 ? null : (int?)(maxLength > 0 ? maxLength : 255);
 
         return new TypeCandidate
         {
-            TypeName = typeName,
-            Precision = maxLength > 255 ? null : maxLength,
+            TypeName = "nvarchar",
+            Precision = precision,
             Reliability = total > 0 ? (double)validCount / total : 0
         };
     }
@@ -263,14 +267,12 @@ public class TypeInferenceService : ITypeInferenceService
         // Menor número = maior prioridade
         return typeName.ToLowerInvariant() switch
         {
-            "nvarchar(max)" => 1,
-            "nvarchar(255)" => 2,
-            "nvarchar" => 3,
-            "datetime" => 4,
-            "bit" => 5,
-            "decimal" => 6,
-            "int" => 7,
-            "bigint" => 8,
+            "nvarchar" => 1,
+            "datetime" => 2,
+            "bit" => 3,
+            "decimal" => 4,
+            "int" => 5,
+            "bigint" => 6,
             _ => 99
         };
     }

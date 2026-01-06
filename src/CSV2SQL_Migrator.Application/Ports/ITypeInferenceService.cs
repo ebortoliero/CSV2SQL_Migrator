@@ -1,3 +1,5 @@
+using System;
+
 namespace CSV2SQL_Migrator.Application.Ports;
 
 /// <summary>
@@ -29,6 +31,12 @@ public class SqlColumnType
 
     public string ToSqlDefinition()
     {
+        // Para nvarchar, quando Precision é null, significa nvarchar(max)
+        if (TypeName.Equals("nvarchar", StringComparison.OrdinalIgnoreCase) && !Precision.HasValue)
+        {
+            return "nvarchar(max)";
+        }
+        
         if (Precision.HasValue && Scale.HasValue)
         {
             return $"{TypeName}({Precision.Value},{Scale.Value})";
