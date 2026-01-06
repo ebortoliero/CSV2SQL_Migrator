@@ -49,7 +49,11 @@ public class IndexModel : PageModel
     [BindProperty]
     public bool IntegratedSecurity { get; set; } = false;
 
+    [BindProperty]
+    public bool TrustServerCertificate { get; set; } = false;
+
     public string? ConnectionTestMessage { get; set; }
+    public string? ConnectionTestDetails { get; set; }
     public bool? ConnectionTestSuccess { get; set; }
     public int? CreatedJobId { get; set; }
 
@@ -73,15 +77,19 @@ public class IndexModel : PageModel
         }
 
         var connectionString = BuildConnectionString();
-        ConnectionTestSuccess = await _sqlServerService.TestConnectionAsync(connectionString);
+        var result = await _sqlServerService.TestConnectionAsync(connectionString);
 
-        if (ConnectionTestSuccess.Value)
+        ConnectionTestSuccess = result.Success;
+
+        if (result.Success)
         {
             ConnectionTestMessage = "Conexão testada com sucesso!";
+            ConnectionTestDetails = null;
         }
         else
         {
-            ConnectionTestMessage = "Falha ao conectar ao banco de dados. Verifique os parâmetros.";
+            ConnectionTestMessage = result.ErrorMessage ?? "Falha ao conectar ao banco de dados. Verifique os parâmetros.";
+            ConnectionTestDetails = result.ErrorDetails;
         }
 
         return Page();
@@ -105,11 +113,12 @@ public class IndexModel : PageModel
         var connectionString = BuildConnectionString();
         
         // Testar conexão antes de iniciar
-        var connectionValid = await _sqlServerService.TestConnectionAsync(connectionString);
-        if (!connectionValid)
+        var connectionResult = await _sqlServerService.TestConnectionAsync(connectionString);
+        if (!connectionResult.Success)
         {
             ConnectionTestSuccess = false;
-            ConnectionTestMessage = "Não é possível iniciar a migração. A conexão com o banco de dados falhou.";
+            ConnectionTestMessage = $"Não é possível iniciar a migração. {connectionResult.ErrorMessage}";
+            ConnectionTestDetails = connectionResult.ErrorDetails;
             return Page();
         }
 
@@ -157,7 +166,7 @@ public class IndexModel : PageModel
 
         // RNF06: Segurança mínima obrigatória - conexões seguras
         builder.Encrypt = true;
-        builder.TrustServerCertificate = false;
+        builder.TrustServerCertificate = TrustServerCertificate;
 
         return builder.ConnectionString;
     }

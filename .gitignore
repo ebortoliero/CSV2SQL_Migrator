@@ -1,1 +1,86 @@
-src/CSV2SQL_Migrator.Application/bin/Debug/net8.0/
+## Arquivos de Build
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Arquivos compilados
+*.dll
+*.exe
+*.pdb
+*.cache
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Arquivos gerados pelo Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+
+## Arquivos gerados pelo NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Arquivos gerados pelo MSBuild
+*.cache
+*.dgspec.json
+*.g.props
+*.g.targets
+project.assets.json
+project.nuget.cache
+
+## Arquivos de dependências
+*.deps.json
+
+## Arquivos de configuração local
+appsettings.Development.json
+appsettings.Local.json
+*.local.json
+
+## Arquivos do Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+## Arquivos do Rider
+.idea/
+*.sln.iml
+
+## Arquivos do Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Arquivos temporários
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+## Arquivos de teste
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml

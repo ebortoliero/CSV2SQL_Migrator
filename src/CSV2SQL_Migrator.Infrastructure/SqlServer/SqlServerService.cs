@@ -2,6 +2,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using CSV2SQL_Migrator.Application.Ports;
+using CSV2SQL_Migrator.Application.Models;
 
 namespace CSV2SQL_Migrator.Infrastructure.SqlServer;
 
@@ -12,18 +13,91 @@ namespace CSV2SQL_Migrator.Infrastructure.SqlServer;
 /// </summary>
 public class SqlServerService : ISqlServerService
 {
-    public async Task<bool> TestConnectionAsync(string connectionString)
+    public async Task<ConnectionTestResult> TestConnectionAsync(string connectionString)
     {
         try
         {
             await using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
-            return true;
+            return ConnectionTestResult.CreateSuccess();
         }
-        catch
+        catch (SqlException sqlEx)
         {
-            return false;
+            // Erros específicos do SQL Server
+            var errorMessage = GetSqlErrorMessage(sqlEx);
+            var errorDetails = GetSqlErrorDetails(sqlEx);
+            return ConnectionTestResult.CreateFailure(errorMessage, errorDetails);
         }
+        catch (Exception ex)
+        {
+            // Outros tipos de erro (network, timeout, etc.)
+            var errorMessage = GetGenericErrorMessage(ex);
+            var errorDetails = ex.ToString();
+            return ConnectionTestResult.CreateFailure(errorMessage, errorDetails);
+        }
+    }
+
+    private string GetSqlErrorMessage(SqlException sqlEx)
+    {
+        // Verificar se é erro relacionado a SSL/certificado
+        if (sqlEx.Message.Contains("nome principal do destino") || 
+            sqlEx.Message.Contains("principal name") ||
+            sqlEx.Message.Contains("SSL") ||
+            sqlEx.Number == -2146893022)
+        {
+            return "Erro de certificado SSL: O certificado do servidor não corresponde ao nome do servidor. " +
+                   "Marque a opção 'Confiar no certificado do servidor' na configuração de conexão.";
+        }
+
+        // Mapear códigos de erro comuns do SQL Server para mensagens amigáveis
+        return sqlEx.Number switch
+        {
+            2 => "Não foi possível conectar ao servidor. Verifique se o servidor está acessível e o nome está correto.",
+            53 => "Erro de rede ao conectar ao servidor. Verifique se o servidor está rodando e acessível.",
+            18456 => "Falha na autenticação. Verifique o usuário e senha informados.",
+            4060 => "Não foi possível abrir o banco de dados. Verifique se o nome do banco está correto e se você tem permissão para acessá-lo.",
+            233 => "Não foi possível estabelecer conexão com o servidor. Verifique se o SQL Server está configurado para aceitar conexões remotas.",
+            10060 => "Timeout ao conectar ao servidor. O servidor pode estar sobrecarregado ou inacessível.",
+            10061 => "Não foi possível conectar ao servidor. O servidor pode não estar rodando ou a porta pode estar bloqueada.",
+            _ => $"Erro ao conectar ao banco de dados: {sqlEx.Message}"
+        };
+    }
+
+    private string GetSqlErrorDetails(SqlException sqlEx)
+    {
+        var details = new System.Text.StringBuilder();
+        details.AppendLine($"Código de erro SQL: {sqlEx.Number}");
+        details.AppendLine($"Servidor: {sqlEx.Server}");
+        details.AppendLine($"Mensagem original: {sqlEx.Message}");
+        
+        if (sqlEx.InnerException != null)
+        {
+            details.AppendLine($"Erro interno: {sqlEx.InnerException.Message}");
+        }
+
+        // Adicionar informações sobre o erro específico se disponível
+        if (sqlEx.Errors != null && sqlEx.Errors.Count > 0)
+        {
+            details.AppendLine("\nDetalhes adicionais:");
+            foreach (SqlError error in sqlEx.Errors)
+            {
+                details.AppendLine($"  - Classe: {error.Class}, Estado: {error.State}, Linha: {error.LineNumber}");
+                details.AppendLine($"    Mensagem: {error.Message}");
+            }
+        }
+
+        return details.ToString();
+    }
+
+    private string GetGenericErrorMessage(Exception ex)
+    {
+        return ex switch
+        {
+            System.Net.Sockets.SocketException => "Erro de rede ao conectar ao servidor. Verifique se o servidor está acessível.",
+            TimeoutException => "Timeout ao conectar ao servidor. O servidor pode estar sobrecarregado ou inacessível.",
+            ArgumentException => "Parâmetros de conexão inválidos. Verifique a string de conexão.",
+            _ => $"Erro ao conectar ao banco de dados: {ex.Message}"
+        };
     }
 
     public async Task CreateTableAsync(string connectionString, string tableName, Dictionary<string, SqlColumnType> columns)

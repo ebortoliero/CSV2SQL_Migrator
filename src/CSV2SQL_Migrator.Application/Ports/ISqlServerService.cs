@@ -1,3 +1,5 @@
+using CSV2SQL_Migrator.Application.Models;
+
 namespace CSV2SQL_Migrator.Application.Ports;
 
 /// <summary>
@@ -12,7 +14,7 @@ public interface ISqlServerService
     /// <summary>
     /// Testa a conexão com o banco de dados.
     /// </summary>
-    Task<bool> TestConnectionAsync(string connectionString);
+    Task<ConnectionTestResult> TestConnectionAsync(string connectionString);
 
     /// <summary>
     /// Cria uma tabela no banco de dados com base no schema inferido.

@@ -22,7 +22,15 @@
         {
             var alertClass = Model.ConnectionTestSuccess == true ? "alert-success" : "alert-danger";
             <div class="alert @alertClass alert-dismissible fade show" role="alert">
-                @Model.ConnectionTestMessage
+                <strong>@(Model.ConnectionTestSuccess == true ? "Sucesso!" : "Erro!")</strong>
+                <div class="mt-2">@Model.ConnectionTestMessage</div>
+                @if (!string.IsNullOrEmpty(Model.ConnectionTestDetails) && Model.ConnectionTestSuccess == false)
+                {
+                    <details class="mt-3">
+                        <summary class="cursor-pointer" style="cursor: pointer; font-weight: 500;">Detalhes técnicos do erro</summary>
+                        <pre class="mt-2 mb-0 p-2 bg-dark text-light rounded" style="font-size: 0.85em; white-space: pre-wrap; word-wrap: break-word;">@Model.ConnectionTestDetails</pre>
+                    </details>
+                }
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
@@ -66,6 +74,18 @@
                             <label class="form-check-label" for="integratedSecurity">
                                 Autenticação Integrada (Windows)
                             </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="TrustServerCertificate" class="form-check-input" type="checkbox" id="trustServerCertificate" />
+                            <label class="form-check-label" for="trustServerCertificate">
+                                Confiar no certificado do servidor (útil para desenvolvimento/teste)
+                            </label>
+                            <small class="form-text text-muted d-block">
+                                Marque esta opção se estiver recebendo erros de SSL relacionados ao certificado do servidor.
+                            </small>
                         </div>
                     </div>
 
