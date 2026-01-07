@@ -354,7 +354,9 @@ public class MigrationJobProcessor
                     columnMapping[i] = sanitized;
                 }
 
-                // RF14: Criar tabela SQL automaticamente
+                // RF14: Dropar tabela se existir e criar tabela SQL automaticamente
+                // Dropar tabela existente para garantir que será recriada com os tipos corretos
+                await _sqlServerService.DropTableAsync(connectionString, tableName);
                 await _sqlServerService.CreateTableAsync(connectionString, tableName, sanitizedColumns);
 
                 // Processar linhas em streaming
@@ -394,10 +396,18 @@ public class MigrationJobProcessor
                 // RF10: Bulk insert
                 if (dataRows.Count > 0)
                 {
+                    // Mapear tipos de colunas na ordem correta (columnMapping mantém a ordem original)
+                    var columnTypesArray = new SqlColumnType[columnMapping.Count];
+                    for (int i = 0; i < columnMapping.Count; i++)
+                    {
+                        columnTypesArray[i] = columnTypes[i];
+                    }
+
                     var inserted = await _bulkInsertService.BulkInsertAsync(
                         connectionString,
                         tableName,
                         columnMapping.Values.ToArray(),
+                        columnTypesArray,
                         dataRows,
                         async (row, index, error) =>
                         {
